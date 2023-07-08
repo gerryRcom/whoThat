@@ -4,7 +4,7 @@ A small application to analyse www logs to determine number of unique IP hits an
 
 1. Retrieve IPs from www access log.
 1. Run the IPs through a geo IP DB.
-1. Direct the parsed to a basic html page.
+1. Direct the parsed info to a basic html page.
 1. Repeat for X amount of logs so there's view of X days of traffic.
 
 Version 1 is very basic and my first attempt, I hope to improve the code as I work my way through.
