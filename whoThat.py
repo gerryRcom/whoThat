@@ -44,7 +44,7 @@ def generateStats(statsDir):
             currentFile = os.path.join(statsDir, file)
             # checking if it is a file
             if os.path.isfile(currentFile):
-                stats.write("<iframe src="+currentFile+" title=\"Stats\"></iframe></br>\n")
+                stats.write("<iframe width=\"20%\" height=\"20%\" src="+currentFile+" title=\"Stats\"></iframe></br>\n")
         stats.write("</body></html>\n")
 
 
@@ -58,10 +58,11 @@ if __name__ == "__main__":
             hitsPerCountry[location] += 1
         else:
             hitsPerCountry[location] = 1
+    
     # generate htm page with yesterdays stats from yesterdays logs
     with open("./stats/"+str(dateStamp)+".htm", 'w') as stats:
         stats.write("<html><head><title>Stats for "+str(dateStamp)+"</title></head><body><table><tr><td>Stats for "+str(dateStamp)+"</td></tr>\n")
-        for country, qty in hitsPerCountry.items():
+        for country, qty in sorted(hitsPerCountry.items()):
             stats.write("<tr><td>{0}</td><td>{1}</td></tr>\n".format(country, str(qty)))
         stats.write("</table></body></html>\n")
     generateStats("./stats")
