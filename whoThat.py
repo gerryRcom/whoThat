@@ -64,9 +64,12 @@ def generateStats(statsDir):
             else:
                 sys.exit(1)
 
-        for key, value in finalData.items():
-            print("{0} {1}".format(key, value))
-            stats.write("<tr><td>{0}</td><td>{1}</td></tr>".format(key, value))
+        # Display stats for the last 10 days only.
+        top10 = 0
+        for key, value in reversed(finalData.items()):
+            if top10 < 10:
+                stats.write("<tr><td><strong>{0}:</strong></td><td>{1}</td></tr>".format(key, value))
+                top10 += 1
         stats.write("</table></body></html>\n")
 
 if __name__ == "__main__":
