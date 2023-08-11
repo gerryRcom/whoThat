@@ -42,14 +42,23 @@ def queryLog(logLocation):
 
 # generate stats htm page to embed all previous stats files and tidy up
 def generateStats(statsDir):
+    finalData = {}
     with open(STATS_LOCATION+"/stats.htm", 'w') as stats:
         stats.write("<html><head><title>Stats for gerryR.com</title></head><body><table>\n")
         for file in os.listdir(statsDir):
             currentFile = os.path.join(statsDir, file)
+            currentFileDate = file[:-4]
+            finalData[currentFileDate] = []
             # checking if it is a file
             if os.path.isfile(currentFile):
-                stats.write("<iframe width=\"25%\" height=\"25%\" src="+currentFile+" title=\"Stats\"></iframe></br>\n")
-        stats.write("</body></html>\n")
+                with open(currentFile, 'r') as currentStats:
+                    for line in currentStats:
+                        finalData[currentFileDate].extend([line.strip()])
+
+        for key, value in finalData.items():
+            print("{0} {1}".format(key, value))
+            stats.write("<tr><td>{0}</td><td>{1}</td></tr>".format(key, value))
+        stats.write("</table></body></html>\n")
 
 if __name__ == "__main__":
     dateStamp = datetime.today().date() - timedelta(days=1)
@@ -64,8 +73,8 @@ if __name__ == "__main__":
     
     # generate htm page with yesterdays stats from yesterdays logs
     with open(STATS_LOG_LOCATION+str(dateStamp)+".htm", 'w') as stats:
-        stats.write("<html><head><title>Stats for "+str(dateStamp)+"</title></head><body><table><tr><td>Stats for "+str(dateStamp)+"</td></tr>\n")
         for country, qty in sorted(hitsPerCountry.items()):
-            stats.write("<tr><td>{0}</td><td>{1}</td></tr>\n".format(country, str(qty)))
-        stats.write("</table></body></html>\n")
+            stats.write("{0},{1}\n".format(country, str(qty)))
+
+    # generate page from previously parsed stats pages
     generateStats("./stats")
