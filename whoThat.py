@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 import os
+import sys
 import re
 import json
 import requests
@@ -14,10 +15,13 @@ STATS_LOG_LOCATION=STATS_LOCATION+"/stats/"
 # Pull creds for geoip service from config file.
 def getConfig():
     configContent = []
-    with open('whoThat.config') as configFile:
-        for line in configFile:
-            configContent.append(line)
-    return(configContent)
+    if os.path.isfile('whoThat.config'):
+        with open('whoThat.config') as configFile:
+            for line in configFile:
+                configContent.append(line)
+        return(configContent)
+    else:
+        sys.exit(1)
 
 # query geolite for the IP's country and just return the country name in English
 def queryLocation(ipAddress):
@@ -29,16 +33,19 @@ def queryLocation(ipAddress):
 
 # extract IPs from log file and tally amount of time's they feature.
 def queryLog(logLocation):
-    with open(logLocation) as file:
-        uniqueIP = {}
-        for line in file:
-            ip = re.findall(r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}', line)
-            # increment by one if ip is already in the dict, if it's not, add it to the dict.
-            if ip[0] in uniqueIP:
-                uniqueIP[ip[0]] += 1
-            else:
-                uniqueIP[ip[0]] = 1
-    return(uniqueIP)
+    if os.path.isfile(logLocation):
+        with open(logLocation) as file:
+            uniqueIP = {}
+            for line in file:
+                ip = re.findall(r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}', line)
+                # increment by one if ip is already in the dict, if it's not, add it to the dict.
+                if ip[0] in uniqueIP:
+                    uniqueIP[ip[0]] += 1
+                else:
+                    uniqueIP[ip[0]] = 1
+        return(uniqueIP)
+    else:
+        sys.exit(1)
 
 # generate stats htm page to embed all previous stats files and tidy up
 def generateStats(statsDir):
@@ -54,6 +61,8 @@ def generateStats(statsDir):
                 with open(currentFile, 'r') as currentStats:
                     for line in currentStats:
                         finalData[currentFileDate].extend([line.strip()])
+            else:
+                sys.exit(1)
 
         for key, value in finalData.items():
             print("{0} {1}".format(key, value))
