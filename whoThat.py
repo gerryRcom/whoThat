@@ -11,12 +11,13 @@ from datetime import datetime, timedelta
 LOG_LOCATION="./logs/access.log.1"
 STATS_LOCATION="."
 STATS_LOG_LOCATION=STATS_LOCATION+"/stats/"
+WHOTAHT_CONFIG="./whoThat.config"
 
 # Pull creds for geoip service from config file.
 def getConfig():
     configContent = []
-    if os.path.isfile('whoThat.config'):
-        with open('whoThat.config') as configFile:
+    if os.path.isfile(WHOTAHT_CONFIG):
+        with open(WHOTAHT_CONFIG) as configFile:
             for line in configFile:
                 configContent.append(line)
         return(configContent)
@@ -94,4 +95,4 @@ if __name__ == "__main__":
             stats.write("{0},{1}\n".format(country, str(qty)))
 
     # generate page from previously parsed stats pages
-    generateStats("./stats")
+    generateStats(STATS_LOG_LOCATION)
