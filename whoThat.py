@@ -51,8 +51,8 @@ def queryLog(logLocation):
 def generateStats(statsDir):
     finalData = {}
     with open(STATS_LOCATION+"/stats.htm", 'w') as stats:
-        stats.write("<html><head><title>Stats for gerryR.com</title></head><body><table>\n")
-        for file in os.listdir(statsDir):
+        stats.write("<html><head><title>Stats for gerryR.com</title></head><body><table style=\"width:100%; font-size:12px\" border=\"1\">\n")
+        for file in sorted(os.listdir(statsDir), reverse=True):
             currentFile = os.path.join(statsDir, file)
             currentFileDate = file[:-4]
             finalData[currentFileDate] = []
@@ -66,9 +66,14 @@ def generateStats(statsDir):
 
         # Display stats for the last 10 days only.
         top10 = 0
-        for key, value in reversed(finalData.items()):
+        for key, value in finalData.items():
+            allValues = ""
             if top10 < 10:
-                stats.write("<tr><td><strong>{0}:</strong></td><td>{1}</td></tr>".format(key, value))
+                for values in value:
+                    allValues = allValues + "<td>" + values + "</td>"
+
+                stats.write("<tr><td><strong>{0}:</strong></td><td>{1}</td></tr>".format(key, allValues))
+                #print(key + ": " + allValues)
                 top10 += 1
         stats.write("</table></body></html>\n")
 
@@ -83,7 +88,7 @@ if __name__ == "__main__":
         else:
             hitsPerCountry[location] = 1
     
-    # generate htm page with yesterdays stats from yesterdays logs
+    # generate page with stats from yesterdays logs
     with open(STATS_LOG_LOCATION+str(dateStamp)+".htm", 'w') as stats:
         for country, qty in sorted(hitsPerCountry.items()):
             stats.write("{0},{1}\n".format(country, str(qty)))
